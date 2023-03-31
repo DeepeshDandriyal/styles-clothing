@@ -18,15 +18,15 @@ const firebaseConfig = {
   const firebaseApp = initializeApp(firebaseConfig);
 
 
-  const provider=new GoogleAuthProvider();
-  provider.setCustomParameters({
+  const googleProvider=new GoogleAuthProvider();
+  googleProvider.setCustomParameters({
     prompt: 'select_account'
   });
 
   export const auth=getAuth();
   
-  export const signInWithGooglePopup=()=>signInWithPopup(auth,provider);
-
+  export const signInWithGooglePopup=()=>signInWithPopup(auth,googleProvider);
+  export const signInWithGoogleRedirect=()=>signInWithRedirect(auth,googleProvider);
 
   //create db
   export const db=getFirestore();
@@ -46,7 +46,7 @@ const firebaseConfig = {
         });
       }
       catch(error){
-        console.log('error');
+        console.log('error',error.message);
       }
     }
     return userDocRef;
