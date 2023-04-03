@@ -1,5 +1,5 @@
 import {initializeApp} from 'firebase/app';
-import {getAuth,signInWithRedirect,signInWithPopup,GoogleAuthProvider} from 'firebase/auth'; //for authentication
+import {getAuth,signInWithPopup,GoogleAuthProvider,createUserWithEmailAndPassword} from 'firebase/auth'; //for authentication
 
 import {getFirestore,doc,getDoc,setDoc} from 'firebase/firestore'; //to use firestore database
 
@@ -26,12 +26,14 @@ const firebaseConfig = {
   export const auth=getAuth();
   
   export const signInWithGooglePopup=()=>signInWithPopup(auth,googleProvider);
-  export const signInWithGoogleRedirect=()=>signInWithRedirect(auth,googleProvider);
+  
 
   //create db
   export const db=getFirestore();
 
-  export const createUserDocumentFromAuth=async(userAuth)=>{
+  export const createUserDocumentFromAuth=async(userAuth,additionalInfo={})=>{
+    if(!userAuth) return;
+
     const userDocRef=doc(db,'users', userAuth.uid);
 
     const userSnapshot=await getDoc(userDocRef);
@@ -42,7 +44,7 @@ const firebaseConfig = {
 
       try{
         await setDoc(userDocRef,{
-          displayName,email,createdAt
+          displayName,email,createdAt,...additionalInfo
         });
       }
       catch(error){
@@ -51,4 +53,10 @@ const firebaseConfig = {
     }
     return userDocRef;
 
+  }
+
+  export const createAuthUserWithEmailAndPassword= async(email,password)=>{
+    if(!email||!password) return;
+
+    return await createAuthUserWithEmailAndPassword(auth,email,password)
   }
