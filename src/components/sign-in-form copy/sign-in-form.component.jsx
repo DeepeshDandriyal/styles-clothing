@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { UserContext } from "../../contexts/user.context";
 import {
   createUserDocumentFromAuth,
   signInAuthUserWithEmailAndPassword,
@@ -19,24 +20,27 @@ const SignInForm = () => {
 
   //destructuring formFields... as value use hoga ye...
   const { email, password } = formFields;
+  const { setCurrentUser } = useContext(UserContext);
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
   };
 
   const SignInwithGoogle = async () => {
-    const response = await signInWithGooglePopup();
+    const { user } = await signInWithGooglePopup();
     //response me access token  milega...
-    await createUserDocumentFromAuth(response.user);
+    setCurrentUser(user);
+    await createUserDocumentFromAuth(user);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await signInAuthUserWithEmailAndPassword(
+      const { user } = await signInAuthUserWithEmailAndPassword(
         email,
         password
       );
+      setCurrentUser(user);
       resetFormFields();
     } catch (error) {
       switch (error.code) {
